@@ -1,6 +1,7 @@
 const { unipay } = require('./_lib');
 
 const PRICE = 8790; // centavos. O valor é definido AQUI, nunca pelo navegador.
+const SHIPPING = { PAC: 985, SEDEX: 1892 }; // frete em centavos, também definido AQUI.
 const MODELS = ['Heineken', 'Coca-Cola', 'Skol', 'Michelob', 'Budweiser', 'Antárctica', 'Monster', 'Amstel', 'Red Bull', 'Brahma'];
 const digits = v => String(v == null ? '' : v).replace(/\D/g, '');
 const text = (v, max = 120) => String(v == null ? '' : v).trim().slice(0, max);
@@ -25,6 +26,8 @@ module.exports = async (req, res) => {
     const zip = digits(a.zip), uf = text(a.state, 2).toUpperCase();
 
     if (!MODELS.includes(b.model)) return fail(res, 400, 'Modelo inválido.');
+    if (!Object.prototype.hasOwnProperty.call(SHIPPING, b.shipping)) return fail(res, 400, 'Escolha a forma de envio.');
+    const fee = SHIPPING[b.shipping];
     if (name.split(/\s+/).length < 2) return fail(res, 400, 'Informe o nome completo.');
     if (!/^\S+@\S+\.\S+$/.test(email)) return fail(res, 400, 'E-mail inválido.');
     if (!cpfOk(cpf)) return fail(res, 400, 'CPF inválido.');
@@ -34,11 +37,11 @@ module.exports = async (req, res) => {
 
     const ref = 'cooler-' + Date.now().toString(36);
     const body = {
-      amount: PRICE,
+      amount: PRICE + fee, // produto + frete
       paymentMethod: method,
       customer: { name, email, phone, document: { number: cpf, type: 'CPF' } },
       shipping: {
-        fee: 0,
+        fee,
         address: {
           street: text(a.street), streetNumber: text(a.number, 20), complement: text(a.complement) || '-',
           zipCode: zip, neighborhood: text(a.neighborhood), city: text(a.city), state: uf, country: 'br',
@@ -48,7 +51,7 @@ module.exports = async (req, res) => {
       traceable: true,
       ip: (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || undefined,
       postbackUrl: 'https://' + req.headers.host + '/api/webhook',
-      metadata: { pedido: ref, modelo: b.model },
+      metadata: { pedido: ref, modelo: b.model, envio: b.shipping },
     };
 
     let r;
