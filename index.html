@@ -165,7 +165,7 @@ html:has(#pix-checkout[open]){overflow:hidden}
 #pix-form .pay-opt:has(input:checked){border-color:var(--red)}
 #pix-form .pay-opt input{width:auto;min-height:0;accent-color:#c8241a}
 #pix-form .pay-opt small{display:block;font-weight:400}
-#pix-form .ship-methods img{margin-left:auto;height:26px;width:auto;flex-shrink:0}#pix-form .ship-opt span{flex:1;display:flex;align-items:center;gap:8px}#ship-info{grid-column:1/-1;padding:10px 12px;border-radius:8px;background:#fff0aa;font-size:14px}#ship-info strong{color:var(--red)}#card-fields{margin-bottom:8px}#card-fields[hidden]{display:none}
+#pix-form .ship-methods img{margin-left:auto;height:26px;width:auto;flex-shrink:0}#pix-form .ship-opt span{flex:1;display:flex;align-items:center;gap:8px}#ship-info{grid-column:1/-1;padding:10px 12px;border-radius:8px;background:#fff0aa;font-size:14px}#ship-info strong{color:var(--red)}#ship-info .track-note{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed #c7a863;font-weight:700}#card-fields{margin-bottom:8px}#card-fields[hidden]{display:none}
 #pay-error{background:#ffd9d4;color:#8a1208;padding:10px;border-radius:8px;font-size:14px;margin:8px 0}
 #pay-result{text-align:center}#pix-qr{width:min(100%,240px);margin:12px auto}#pix-qr svg{width:100%;height:auto;background:#fff}
 #pix-code{width:100%;font-size:12px;margin:8px 0;padding:8px;border:1px solid #c7a863;border-radius:7px;resize:none}
@@ -230,7 +230,7 @@ html:has(#pix-checkout[open]){overflow:hidden}
 </fieldset>
 <p id="pay-error" role="alert" hidden></p>
 <button class="cta" type="submit" id="pay-submit">Gerar Pix</button>
-<p class="small" id="order-total">Produto R$ 87,90 + frete R$ 9,85 = Total R$ 97,75<br>O código de rastreio chega no seu WhatsApp assim que o pagamento é confirmado.</p>
+<p class="small" id="order-total">Produto R$ 87,90 + frete R$ 9,85 = Total R$ 97,75</p>
 </form>
 <section id="pay-result" hidden>
 <div id="pix-box" hidden><p><strong>Escaneie o QR Code</strong> ou use o Pix copia e cola. O pedido é confirmado assim que o pagamento cair.</p><div id="pix-qr"></div><textarea id="pix-code" readonly rows="4"></textarea><button type="button" class="cta" id="pix-copy">Copiar código Pix</button></div>
@@ -486,8 +486,8 @@ const totalCents = () => PRODUCT_CENTS + SHIPPING[shippingValue()].fee;
 const money = cents => 'R$ ' + (cents / 100).toFixed(2).replace('.', ',');
 function updateTotals() {
  const sh = SHIPPING[shippingValue()], total = totalCents();
- byId('ship-info').innerHTML = '<strong>Envio imediato</strong><br>Entrega via ' + sh.name + ' em ' + sh.days;
- byId('order-total').innerHTML = 'Produto ' + money(PRODUCT_CENTS) + ' + frete ' + money(sh.fee) + ' = Total ' + money(total) + '<br>O código de rastreio chega no seu WhatsApp assim que o pagamento é confirmado.';
+ byId('ship-info').innerHTML = '<strong>Envio imediato</strong><br>Entrega via ' + sh.name + ' em ' + sh.days + '<span class="track-note">O código de rastreio chega no seu WhatsApp assim que o pagamento é confirmado.</span>';
+ byId('order-total').innerHTML = 'Produto ' + money(PRODUCT_CENTS) + ' + frete ' + money(sh.fee) + ' = Total ' + money(total);
  [...form.elements.installments.options].forEach((o, i) => { o.textContent = (i + 1) + 'x de ' + money(Math.round(total / (i + 1))); });
  syncMethod();
 }
