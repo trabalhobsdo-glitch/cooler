@@ -230,7 +230,7 @@ html:has(#pix-checkout[open]){overflow:hidden}
 </fieldset>
 <p id="pay-error" role="alert" hidden></p>
 <button class="cta" type="submit" id="pay-submit">Gerar Pix</button>
-<p class="small" id="order-total">Total R$ 97,75 · pagamento seguro pela Unipay</p>
+<p class="small" id="order-total">Produto R$ 87,90 + frete R$ 9,85 = Total R$ 97,75<br>O código de rastreio chega no seu WhatsApp assim que o pagamento é confirmado.</p>
 </form>
 <section id="pay-result" hidden>
 <div id="pix-box" hidden><p><strong>Escaneie o QR Code</strong> ou use o Pix copia e cola. O pedido é confirmado assim que o pagamento cair.</p><div id="pix-qr"></div><textarea id="pix-code" readonly rows="4"></textarea><button type="button" class="cta" id="pix-copy">Copiar código Pix</button></div>
@@ -487,7 +487,7 @@ const money = cents => 'R$ ' + (cents / 100).toFixed(2).replace('.', ',');
 function updateTotals() {
  const sh = SHIPPING[shippingValue()], total = totalCents();
  byId('ship-info').innerHTML = '<strong>Envio imediato</strong><br>Entrega via ' + sh.name + ' em ' + sh.days;
- byId('order-total').textContent = 'Produto ' + money(PRODUCT_CENTS) + ' + frete ' + money(sh.fee) + ' = Total ' + money(total) + ' · pagamento seguro pela Unipay';
+ byId('order-total').innerHTML = 'Produto ' + money(PRODUCT_CENTS) + ' + frete ' + money(sh.fee) + ' = Total ' + money(total) + '<br>O código de rastreio chega no seu WhatsApp assim que o pagamento é confirmado.';
  [...form.elements.installments.options].forEach((o, i) => { o.textContent = (i + 1) + 'x de ' + money(Math.round(total / (i + 1))); });
  syncMethod();
 }
